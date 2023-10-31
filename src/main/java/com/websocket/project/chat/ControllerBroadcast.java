@@ -1,4 +1,4 @@
-package com.websocket.project.controller;
+package com.websocket.project.chat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;

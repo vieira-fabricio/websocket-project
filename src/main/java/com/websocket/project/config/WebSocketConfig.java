@@ -1,5 +1,6 @@
-package com.websocket.project;
+package com.websocket.project.config;
 
+import com.websocket.project.CustomStompSessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -27,9 +28,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	}
 	
 	
-	@Autowired
+	/*@Autowired
 	private WebSocketStompClient stompClient;
 	
 	StompSessionHandler sessionHandler = new CustomStompSessionHandler();
-	StompSession stompSession = stompClient.connect(loggerServerQueueUrl, sessionHandler).get();
+	StompSession stompSession = stompClient.connect(loggerServerQueueUrl, sessionHandler).get();*/
 }
