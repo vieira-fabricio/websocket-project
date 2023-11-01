@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Chat Application</title>
+    <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+    <div id="username_page">
+        <div id="username_page_container">
+            <h1 class="title">Digite o seu username para acessar a sala de chat</h1>
+            <form id="username_form" name="usernameForm">
+                <div class="form_group">
+                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form_control">
+                </div>
+
+                <div class="form_group">
+                    <button type="submit" class="accent username_submit">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="chat_page" class="hidden">
+        <div class="chat_container">
+            <div class="chat_header">
+                <h2>Spring WebSocket Chat - Demo</h2>
+            </div>
+
+            <div class="connecting">
+                Connecting...
+            </div>
+
+            <ul id="messageArea">
+
+            </ul>
+
+            <form id="message_form" name="messageForm">
+                <div class="form_group">
+                    <div class="input_group clearfix">
+                        <input type="text" id="message" placeholder="Digite sua mensagem" autocomplete="off" class="form_control">
+                        <button type="submit" class="primary">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
