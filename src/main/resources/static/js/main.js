@@ -6,7 +6,7 @@ var usernameForm = document.querySelector('#username_form')
 var messageForm = document.querySelector('#message_form')
 var messageInput = document.querySelector('#message')
 var messageArea = document.querySelector('#messageArea')
-var connectElement = document.querySelector('.connecting')
+var connectingElement = document.querySelector('.connecting')
 
 var stompClient = null
 var username = null
@@ -16,16 +16,17 @@ var colors = [
 '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ]
 
-function.connect(event){
+function connect(event){
     username = document.querySelector('#name').value.trim()
     if(username){
         usernamePage.classList.add('hidden')
         chatPage.classList.remove('hidden')
 
-        var socket = new SocketJs('/mywebsockets')
-        stompClient = stomp.over(socket)
+        var socket = new SockJS('/ws')
+        stompClient = Stomp.over(socket)
 
-        stompClient.connect({}, onConnected, onerror)
+        stompClient.connect({}, onConnected, onError)
+        console.log('usuario conectado!')
     }
     event.preventDefault();
 }
@@ -35,37 +36,84 @@ function onConnected(){
 
     stompClient.send('/app/chat.addUser',
                 {},
-                JSON.stringfy({sender: username, type: 'JOIN'})
+                JSON.stringify({sender: username, type: 'JOIN'})
     )
     connectingElement.classList.add('hidden')
 }
 
-function onMessageReceived(){
-    var message = JSON.parse()
+function onError(error){
+    connectingElement.textContent = 'Não pôde conectar ao servidor websocket! Por favor atualize a página e tente novamente!'
+    connectingElement.style.color = 'red'
 }
 
-function sendMessage(){
+function sendMessage(event){
     var messageContent = messageInput.value.trim()
     if(messageContent && stompClient) {
         var chatMessage = {
             sender: username,
-            content: messageContent,
+            content: messageInput.value,
             type: 'CHAT'
         }
         stompClient.send(
             '/app/chat.sendMessage',
             {},
-            JSON.stringfy(chatMessage)
+            JSON.stringify(chatMessage)
         )
         messageInput.content = ''
+        console.log('usuário enviou mensagem')
     }
     event.preventDefault()
 }
 
-function onerror(){
-    connectingElement.textContext = 'Não pôde conectar ao servidor websocket! Por favor atualize a página e tente novamente!'
-    connectingElement.style.color = 'red'
+function onMessageReceived(payload){
+    var message = JSON.parse(payload.body)
+
+    var messageElement = document.createElement('li')
+
+    if(message.type === 'JOIN'){
+        messageElement.classList.add('event_message')
+        message.content = message.sender + ' Joined!'
+    } else if(message.type === 'LEAVE'){
+        messageElement.classList.add('event_message')
+        message.content = message.sender + ' left!'
+    } else{
+        messageElement.classList.add('chat_message')
+
+        var avatarElement = document.createElement('i')
+        var avatarText = document.createTextNode(message.sender[0])
+        avatarElement.appendChild(avatarText)
+        avatarElement.style['background-color'] = getAvatarColor(message.sender)
+
+        messageElement.appendChild(avatarElement)
+
+        var usernameElement = document.createElement('span')
+        var usernameText = document.createTextNode(message.sender)
+        usernameElement.appendChild(usernameText)
+        messageElement.appendChild(usernameElement)
+        console.log('usuario recebeu mensagem')
+    }
+
+    var textElement = document.createElement('p')
+    var messageText = document.createTextNode(message.content)
+    textElement.appendChild(messageText)
+
+    messageElement.appendChild(textElement)
+
+    messageArea.appendChild(messageElement)
+    messageArea.scrollTop = messageArea.scrollHeight
 }
+
+
+function getAvatarColor(messageSender){
+    var hash = 0
+    for(var i = 0; i < messageSender.length; i++){
+        hash = 31 * hash + messageSender.charCodeAt(i)
+    }
+
+    var index = Math.abs(hash % colors.length)
+    return colors[index]
+}
+
 
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)
